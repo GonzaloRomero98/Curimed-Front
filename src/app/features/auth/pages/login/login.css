@@ -1,0 +1,137 @@
+/* 🎨 Colores principales de la app */
+:root {
+  --curi-teal: #00B4A2;       /* Verde principal */
+  --curi-teal-700: #008F8A;   /* Verde más oscuro (hover) */
+  --curi-blue: #005B9F;       /* Azul principal */
+  --curi-bg: #F6FAFB;         /* Fondo claro */
+  --curi-text: #0F172A;       /* Texto principal */
+  --curi-error: #E53935;      /* Rojo para errores */
+}
+
+/* Contenedor principal del login */
+.login-wrap {
+  min-height: 974px;                 /* Alto mínimo */
+  display: grid;                     /* Centrado con grid */
+  place-items: center;               /* Centrar vertical y horizontal */
+  padding: 20px;                     /* Espacio interno */
+  background: var(--curi-bg);        /* Fondo claro */
+  color: var(--curi-text);           /* Texto oscuro */
+}
+
+/* Sección de marca (logo + título) */
+.brand {
+  text-align: center;
+}
+
+.brand .logo {
+  width: 80px;                       /* Tamaño del logo */
+  height: auto;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.08)); /* Sombrita */
+}
+
+.brand .brand-title {
+  margin: 0;
+  font-weight: bold;
+}
+
+.brand .brand-sub {
+  margin-top: 4px;
+  font-size: 0.95rem;
+  opacity: 0.7;                      /* Texto más clarito */
+}
+
+/* Tarjeta (el recuadro del login) */
+.card {
+  width: 400px;
+  max-width: 92%;                    /* Para pantallas pequeñas */
+  border-radius: 20px;
+  border: 1px solid rgba(0, 91, 159, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 91, 159, 0.15);
+  background: #fff;
+  padding: 20px;
+}
+
+/* Formulario */
+form {
+  display: grid;
+  gap: 14px;                         /* Espacio entre campos */
+}
+
+.full {
+  width: 100%;
+}
+
+/* Fila horizontal */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;    /* Repartir elementos */
+}
+
+/* Enlaces (ej: recuperar contraseña) */
+.link {
+  color: var(--curi-blue);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.btn-primary {
+  background-color: var(--curi-teal);
+  color: #E53935;
+  width: 100%;
+  height: 48px;              /* un poquito más alto */
+  border-radius: 12px;
+  font-weight: 800;          /* más grueso (antes 700) */
+  font-size: 1rem;           /* tamaño del texto (16px) */
+  letter-spacing: 0.5px;     /* espacio entre letras, mejora legibilidad */
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: var(--curi-teal-700);
+}
+
+.btn-primary:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+input, .mdc-text-field--outlined {
+  border-radius: 12px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+input:invalid {
+  border-color: var(--curi-error);
+}
+
+.loader {
+  margin-top: 10px;
+  height: 4px;
+  background-color: var(--curi-teal);
+}
+
+/* Modo oscuro automático */
+/*@media (prefers-color-scheme: dark) {
+  .login-wrap {
+    background: #0b1220;
+    color: #e6edf3;
+  }
+  .card {
+    background: #111827;
+    border-color: rgba(255,255,255,.06);
+    box-shadow: 0 10px 30px rgba(0,0,0,.45);
+  }
+  .link {
+    color: #4aa8ff;
+  }
+}*/

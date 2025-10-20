@@ -1,0 +1,129 @@
+body{
+    margin: 0px;
+    padding: 0px;
+    font-family: "roboto", sans-serif;
+}
+
+.navbar{
+    width: 100%;
+    height: auto;
+    position: sticky;
+    background-color: #005B9F;
+    margin: 0px;
+    padding: 0 16px;
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    padding: 20px 0px 20px 0px;
+    width: 180px;
+    height: auto;
+    display: block;
+}
+
+.logodiv{
+    display: flex;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    color:white;
+}
+
+.nav-btn {
+    color: #ffffff;
+    font-weight: 500;
+    border-radius: 999px;
+    padding: 6px 12px;
+    text-transform: none;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background-color: #ffffff1f;
+}
+
+.reserva-number {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    color: white;
+    margin-right: 20px;
+}
+
+#btn-login {
+    margin-right: 20px;
+    background-color: white;
+    color: #005B9F;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#btn-login:hover {
+    background-color: #005B9F;
+    color: white;
+} 
+
+.espacio{
+    flex: 1
+}
+
+.contactos{
+    display: flex;
+    align-items: center ;
+    gap: 10px;
+}
+
+.contactos p, span{
+    color: #ffffff;
+    font-weight: 500;
+    font-size: large;
+}
+
+.reservaContacto{
+    color: #00B4A2;
+    font-weight: bold;
+    margin: 0;
+}
+
+
+.contactoEmergencia{
+    color: #00B4A2;
+    font-weight: bold;
+    margin-left: 20px;
+    margin-bottom: 0;
+}
+
+
+.login{
+    display: flex;
+    align-items: center;
+    gap:10px;
+    color:white;
+}
+
+.login-btn{
+    background-color: #00B4A2;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-weight: 500;
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover{
+    background-color: #008f8a;
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
+}

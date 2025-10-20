@@ -1,0 +1,109 @@
+<div class="wrap">
+  <h1>Agregar nuevo médico</h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="grid">
+
+    <!-- Datos de acceso -->
+    <section class="card">
+      <h2>Datos de acceso (usuario)</h2>
+      <div class="grid g3">
+        <!-- correo -->
+        <mat-form-field appearance="outline">
+          <mat-label>Correo</mat-label>
+          <input matInput type="email" formControlName="correo" placeholder="medico@curimed.cl" />
+          <mat-error *ngIf="form.get('correo')?.hasError('required')">Obligatorio</mat-error>
+          <mat-error *ngIf="form.get('correo')?.hasError('email')">Correo inválido</mat-error>
+        </mat-form-field>
+
+        <!-- contraseñas -->
+        <div formGroupName="contrasena" class="grid g2">
+          <mat-form-field appearance="outline">
+            <mat-label>Contraseña</mat-label>
+            <input matInput type="password" formControlName="contrasena1" minlength="8" />
+            <mat-hint>Mínimo 8 caracteres</mat-hint>
+            <mat-error *ngIf="form.get('contrasena.contrasena1')?.hasError('required')">Obligatorio</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Repetir contraseña</mat-label>
+            <input matInput type="password" formControlName="contrasena2" minlength="8" />
+            <mat-error *ngIf="form.get('contrasena.contrasena2')?.hasError('required')">Obligatorio</mat-error>
+            <mat-error
+              *ngIf="form.get('contrasena')?.hasError('mismatch') && (form.get('contrasena.contrasena2')?.dirty || form.get('contrasena.contrasena2')?.touched)">
+              Las contraseñas no coinciden
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+
+    <!-- Datos del médico -->
+    <section class="card">
+      <h2>Datos del médico</h2>
+      <div class="grid g3">
+        <mat-form-field appearance="outline">
+          <mat-label>RUT</mat-label>
+          <input matInput formControlName="rut_medico" placeholder="12.345.678-5" />
+          <mat-error *ngIf="form.get('rut_medico')?.hasError('required')">Obligatorio</mat-error>
+          <mat-error *ngIf="form.get('rut_medico')?.errors?.['rut'] as e">{{ e }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nombres</mat-label>
+          <input matInput formControlName="nombres" />
+          <mat-error *ngIf="form.get('nombres')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Apellidos</mat-label>
+          <input matInput formControlName="apellidos" />
+          <mat-error *ngIf="form.get('apellidos')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Celular</mat-label>
+          <input matInput formControlName="celular" placeholder="+56 9 1234 5678" />
+          <mat-error *ngIf="form.get('celular')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha de nacimiento</mat-label>
+          <input matInput [matDatepicker]="dp" formControlName="fecha_nacimiento" />
+          <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+          <mat-datepicker #dp></mat-datepicker>
+          <mat-error *ngIf="form.get('fecha_nacimiento')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Dirección</mat-label>
+          <input matInput formControlName="direccion" />
+          <mat-error *ngIf="form.get('direccion')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Especialidad</mat-label>
+          <mat-select formControlName="especialidad_id">
+            <mat-option *ngFor="let e of especialidades()" [value]="e.especialidad_id">
+              {{ e.nombre }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('especialidad_id')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Comuna</mat-label>
+          <mat-select formControlName="comuna_id">
+            <mat-option *ngFor="let c of comunas()" [value]="c.comuna_id">
+              {{ c.nombre }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('comuna_id')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+      </div>
+    </section>
+
+    <button mat-raised-button color="primary" [disabled]="loading()">
+      {{ loading() ? 'Creando…' : 'Crear médico' }}
+    </button>
+  </form>
+</div>

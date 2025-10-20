@@ -1,0 +1,53 @@
+<ng-container *ngIf="obtenerRol() !== 'ADMIN' ">
+  <mat-toolbar class="navbar" role="navigation" aria-label="Barra principal">
+    <div class="logodiv">
+    <img src="/logo2.png" class="logo" />
+    </div>
+
+    <nav class="nav-links" aria-label="Secciones del sitio">
+      <button mat-button class="nav-btn">Quiénes somos</button>
+      <button mat-button class="nav-btn">Especialidades</button>
+      <button mat-button class="nav-btn">Médicos</button>
+      <button mat-button class="nav-btn">Contacto</button>
+    </nav>
+
+    <div class="espacio"></div>
+
+    <div class="contactos" aria-label="Teléfonos de contacto">
+      <span class="reservaContacto">Reserva tu hora: </span>
+      <span href="tel:+56912345678" class="numContacto">+56 9 1234 5678</span>
+      <span class="contactoEmergencia">Emergencia:</span>
+      <span href="tel:+56987654321" class="numEmergencia">+56 9 8765 4321</span>
+    </div>
+
+    <div class="login">
+      <ng-container *ngIf="usuarioGuardado(); else btnLogin" >
+        <button mat-stroked-button class="login-btn" [matMenuTriggerFor]="userMenu" arial-label="'Menu usuario">
+          <mat-icon>account-circle</mat-icon>
+          <span class="hidden-sm">{{ nombreCorto() }}</span>  
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item disabled>
+            <mat-icon>person</mat-icon>
+            <span>{{ usuarioGuardado()?.nombres }} {{ usuarioGuardado()?.apellidos }}</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="irPerfil()">
+            <mat-icon>badge</mat-icon>
+            <span>Perfil</span>
+          </button>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Cerrar sesión</span>
+          </button>
+        </mat-menu>
+      </ng-container>
+      <ng-template #btnLogin>
+        <button mat-stroked-button class="login-btn" (click)="login()"><i  class="fa-solid fa-user"></i>   Iniciar sesión</button>
+      </ng-template>
+    </div>
+  </mat-toolbar>
+</ng-container>
+<!--<app-reservas></app-reservas>-->
+
+<router-outlet></router-outlet>

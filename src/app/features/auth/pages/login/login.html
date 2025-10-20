@@ -1,0 +1,62 @@
+<div class="login-wrap">
+  <div class="brand">
+    <img src="/logo2.png" alt="CuriMed" class="logo" />
+    <h1 class="brand-title">CuriMed</h1>
+    <p class="brand-sub">Salud conectada, simple y segura</p>
+  </div>
+
+  <mat-card class="card">
+    <mat-card-header>
+      <mat-card-title>Iniciar sesión</mat-card-title>
+      <mat-card-subtitle>Accede a tu cuenta</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" aria-label="Formulario de inicio de sesión">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Correo electrónico</mat-label>
+          <input 
+            matInput type="email" 
+            formControlName="correo" 
+            placeholder="tu@correo.com" 
+          />
+          <mat-icon matSuffix>mail</mat-icon>
+          <mat-error *ngIf="form.get('correo')?.invalid && form.get('correo')?.touched">
+            Ingresa un correo válido
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Contraseña</mat-label>
+          <input 
+            matInput [type]="showPass ? 'text' : 'password'" 
+            formControlName="contrasena" 
+            placeholder="••••••••" 
+          />
+          <button mat-icon-button matSuffix type="button" (click)="showPass = !showPass" aria-label="Mostrar contraseña">
+            <mat-icon>{{ showPass ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="form.get('contrasena')?.invalid && form.get('contrasena')?.touched">
+            La contraseña es obligatoria
+          </mat-error>
+        </mat-form-field>
+
+        <div class="row between">
+          <mat-checkbox formControlName="remember">Recordarme</mat-checkbox>
+          <a class="link" routerLink="/forgot">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <button class="btn-primary" mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading">
+          <mat-icon>login</mat-icon>
+          <span>{{ loading ? 'Entrando...' : 'Entrar' }}</span>
+          <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+        </button>
+      </form>
+
+      <div class="alt-actions">
+        <span>¿No tienes cuenta?</span>
+        <a class="link" href="/registro">Crear cuenta</a>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

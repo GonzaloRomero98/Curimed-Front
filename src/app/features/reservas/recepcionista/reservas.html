@@ -1,0 +1,137 @@
+<form class="form-cita" [formGroup]="form" (ngSubmit)="confirmarCita()">
+  <mat-card class="section">
+    <mat-card-title>Datos del paciente</mat-card-title>
+
+    <mat-card-content class="datos-paciente">
+      <mat-form-field appearance="outline">
+        <mat-label>Rut</mat-label>
+        <input matInput formControlName="rut" placeholder="12.345.678-9" autocomplete="off">
+        <mat-error *ngIf="form.get('rut')?.hasError('required')">Requerido</mat-error>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="button" (click)="buscarPaciente()">
+        Buscar
+      </button>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Nombres</mat-label>
+        <input matInput formControlName="nombres" placeholder="Nombres" autocomplete="off">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Apellidos</mat-label>
+        <input matInput formControlName="apellidos" placeholder="Apellidos" autocomplete="off">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Celular</mat-label>
+        <input matInput formControlName="celular" placeholder="Celular" autocomplete="off">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Correo</mat-label>
+        <input matInput formControlName="correo" placeholder="Correo" autocomplete="off">
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section">
+    <mat-card-title>Selecciona profesional, servicio y fecha</mat-card-title>
+
+    <mat-card-content class="grid-3">
+      <mat-form-field appearance="outline">
+        <mat-label>Médico</mat-label>
+        <mat-select formControlName="medico_id" (selectionChange)="form.get('start_at')?.reset(); buscarSlots()">
+          <mat-option *ngFor="let d of medicos" [value]="d.rut_medico">
+            {{ d.apellidos }}, {{ d.nombres }} <span *ngIf="d.especialidad">— {{ d.especialidad }}</span>
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('medico_id')?.hasError('required')">Requerido</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Servicio</mat-label>
+        <mat-select formControlName="servicio_id" (selectionChange)="form.get('start_at')?.reset(); buscarSlots()">
+          <mat-option *ngFor="let s of servicios" [value]="s.servicio_id">
+            {{ s.nombre }}
+          </mat-option>
+        </mat-select>
+        <mat-hint>Duración según servicio</mat-hint>
+        <mat-error *ngIf="form.get('servicio_id')?.hasError('required')">Requerido</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          formControlName="fecha"
+          [min]="minDate"
+          [matDatepickerFilter]="fechaHabil"
+          (dateChange)="form.get('start_at')?.reset(); buscarSlots()"
+        >
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker touchUi></mat-datepicker>
+        <mat-hint>Zona horaria: America/Santiago</mat-hint>
+        <mat-error *ngIf="form.get('fecha')?.hasError('required')">Requerido</mat-error>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section">
+    <mat-card-title>Elige una hora</mat-card-title>
+    <mat-card-content>
+      <div class="slots-header">
+        <span *ngIf="form.value.fecha as f">Para el {{ f | date:'EEEE d MMMM y' }}</span>
+        <span class="spacer"></span>
+        <button
+          mat-stroked-button
+          color="primary"
+          type="button"
+          (click)="buscarSlots()"
+          [disabled]="!form.get('medico_id')?.value || !form.get('servicio_id')?.value || !form.get('fecha')?.value">
+          Actualizar
+        </button>
+      </div>
+
+      <!-- Cargando -->
+      <div class="center" *ngIf="loadingSlots">
+        <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+      </div>
+
+      <!-- Error -->
+      <div class="error-box" *ngIf="errorSlot">
+        <mat-icon color="warn" aria-hidden="true">error</mat-icon>
+        <span>{{ errorSlot }}</span>
+      </div>
+
+      <!-- Lista de slots -->
+      <ng-container *ngIf="!loadingSlots && !errorSlot">
+        <div class="slots-grid" *ngIf="slots?.length; else noSlots">
+          <mat-button-toggle-group formControlName="start_at">
+            <mat-button-toggle
+              class="slot-btn"
+              *ngFor="let s of slots"
+              [value]="s.inicio"
+              [disabled]="!s.disponible">
+              {{ s.inicio | date:'HH:mm' }} – {{ s.fin | date:'HH:mm' }}
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+        <ng-template #noSlots>
+          <div class="muted">No hay horas disponibles para los filtros seleccionados.</div>
+        </ng-template>
+      </ng-container>
+
+      <mat-hint *ngIf="form.get('start_at')?.value">
+        Seleccionado: {{ form.get('start_at')?.value | date:'HH:mm' }}
+      </mat-hint>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="actions">
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+      Confirmar
+    </button>
+  </div>
+</form>
