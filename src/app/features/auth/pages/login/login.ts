@@ -84,6 +84,7 @@ export class Login {
             },
             error:(err)=>{
                 const msg = err?.error?.message || 'Credenciales Invalidas'
+                this.loading =false;
                 this.snackBar.open(msg, 'cerrar',{duration:3000});
             },
             complete:()=>(this.loading = false)

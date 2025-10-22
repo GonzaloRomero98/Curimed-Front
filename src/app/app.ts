@@ -123,7 +123,15 @@ export class App {
 
   }
 
+  irReserva(){
+    const rol = this.obtenerRol();
+    if(rol === 'RECEPCIONISTA'){
+      this.router.navigate(['/reservaHoraRecep'])
+    }else if(rol === 'PACIENTE'){
+      this.router.navigate(['/reservaHora']);
+    }
+  }
+
   irPerfil(){
-    
   }
 }

@@ -10,6 +10,8 @@ import { ListaPacienteComponent } from './features/administrador/paciente/listar
 import { ReservasComponent } from './features/reservas/recepcionista/reservas';
 import { ReservasPacienteComponent } from './features/reservas/paciente/reservaPaciente';
 import { Registro } from './features/auth/pages/registro/registro';
+import { AgregarRecepcionistaComponent } from './features/administrador/recepcionista/agregarRecepcionista/agregarRecepcionista';
+import { ListaRecepcionistas } from './features/administrador/recepcionista/listarRecepcionistas/listarRecepcionista';
 
 export const routes: Routes = [
     {path:'', component: HomeComponent},
@@ -25,6 +27,8 @@ export const routes: Routes = [
             {path:'medicos/agregar', component:AgregarMedicoComponent},
             {path:'pacientes',component: ListaPacienteComponent},
             {path:'pacientes/agregar', component:AgregarPacienteComponent},
+            {path:'recepcionista', component:ListaRecepcionistas},
+            {path:'recepcionista/agregar', component:AgregarRecepcionistaComponent}
         ]
     },
     {

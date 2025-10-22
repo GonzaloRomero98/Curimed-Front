@@ -1,21 +1,20 @@
-import { Component, inject, OnInit, signal } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from "@angular/forms";
-import { BuscarPacienteService, PacineteCreate } from "../../../../core/services/buscarPaciente.service";
+import { BuscarRecepcionistaService, Comuna, RecepcionistaCreate } from "../../../../core/services/buscarRecepcionista.service";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { HttpErrorResponse } from "@angular/common/http";
-import { Comuna } from "../../../../core/services/buscarPaciente.service";
 import { firstValueFrom } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { MatButtonModule } from "@angular/material/button";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatButtonModule } from "@angular/material/button";
 
 
-function contrasenaigual(validarContrasena:AbstractControl):ValidationErrors | null{
+function contrasenaIgual(validarContrasena:AbstractControl):ValidationErrors | null{
     const contrasena1 = validarContrasena.get('contrasena1')?.value;
     const contrasena2 = validarContrasena.get('contrasena2')?.value;
     return contrasena1 === contrasena2 ? null : {mismatch:true}
@@ -37,9 +36,8 @@ function validarRut(ctrl: AbstractControl): ValidationErrors | null {
   return dv === dvCalc ? null : { rut: 'DV inválido' };
 }
 
-
 @Component({
-    selector:'app-agregarPaciente',
+    selector:'app-agregar-recepcionista',
     imports:[
         CommonModule, 
         ReactiveFormsModule,
@@ -51,27 +49,26 @@ function validarRut(ctrl: AbstractControl): ValidationErrors | null {
         MatNativeDateModule,
         MatSnackBarModule
     ],
-    templateUrl:'./agregarPaciente.html',
-    styleUrls:['./agregarPaciente.css'],
-    standalone:true
+    templateUrl:'./agregarRecepcionista.html',
+    styleUrl:'./agregarRecepcionista.css',
+    standalone:true,
 })
 
-export class AgregarPacienteComponent implements OnInit{
+export class AgregarRecepcionistaComponent{
     private fb = inject(FormBuilder);
-    private api = inject(BuscarPacienteService);
+    private api = inject(BuscarRecepcionistaService);
     private snack = inject(MatSnackBar);
 
-    constructor(
-        private router:Router
-    ){}
+    constructor(private router:Router){}
 
-    private humanizarError(err:any, paso:'usuario'|'paciente'):string{
-        const origen = paso === 'usuario' ? 'del usuario': 'del paciente';
+    private humanizarError(err:any , paso:'usuario'|'recepcionista'):string{
+        const origen = paso === 'usuario'? 'del usuario': 'del recepcionista'
 
         if(err instanceof HttpErrorResponse){
             const status = err.status;
             const body = err.error;
             const valida = Array.isArray(body?.message) ? body.message.join(' • ') : (body?.message ?? '');
+
             if (status === 0)   return `No hay conexión con el servidor (${origen}).`;
             if (status === 400) return `Datos ${origen} inválidos: ${valida || 'revísalos e inténtalo de nuevo'}`;
             if (status === 404) return `Recurso no encontrado (${origen}).`;
@@ -79,7 +76,7 @@ export class AgregarPacienteComponent implements OnInit{
             if (status >= 500)  return `Error interno (${status}). Intenta más tarde.`;
             return body?.message || `Error ${status} (${origen}).`;
         }
-        
+
         return err?.message || `Error inesperado (${origen}).`;
     }
 
@@ -91,8 +88,8 @@ export class AgregarPacienteComponent implements OnInit{
         contrasena: this.fb.group({
             contrasena1:['',[Validators.required, Validators.minLength(8)]],
             contrasena2:['',[Validators.required, Validators.minLength(8)]],
-        },{Validators:contrasenaigual}),
-        rut_paciente:['',[Validators.required, validarRut]],
+        },{Validators:contrasenaIgual}),
+        rut_recepcionista:['',[Validators.required, validarRut]],
         nombres:['',Validators.required],
         apellidos:['',Validators.required],
         celular:['',Validators.required],
@@ -101,8 +98,8 @@ export class AgregarPacienteComponent implements OnInit{
         comuna_id:[null as unknown as number, Validators.required]
     });
 
-    ngOnInit(): void {
-        this.cargarOpciones()
+    ngOnInit():void{
+        this.cargarOpciones();
     }
 
     async cargarOpciones(){
@@ -116,42 +113,47 @@ export class AgregarPacienteComponent implements OnInit{
             this.snack.open('Revisar los campos marcados','OK',{duration:2500});
             return;
         }
+
         this.loading.set(true);
-        let paso : 'usuario' | 'paciente' = 'usuario';
-        let usuario_id: string | null = null
+        let paso: 'usuario'| 'recepcionista'= 'usuario';
+        let usuario_id: string | null = null;
 
         try{
             const correo = this.form.value.correo!;
             const contrasena = this.form.get('contrasena.contrasena1')?.value as string;
             const userRes = await firstValueFrom(this.api.crearUsuario({
-                correo, contrasena,rol:'PACIENTE'
+                correo, contrasena,rol:'RECEPCIONISTA'
             }));
+
             usuario_id = (userRes.id);
             if(!usuario_id){
-                throw new Error('La api no devolvio la id')
+                throw new Error('La api no devolvio la ID');
             }
 
-            paso='paciente';
-            const payload:PacineteCreate = {
+            paso = 'recepcionista';
+
+            const payload:RecepcionistaCreate ={
                 usuario_id,
-                rut_paciente:this.form.value.rut_paciente!.toUpperCase(),
-                nombres:this.form.value.nombres!,
-                apellidos:this.form.value.apellidos!,
-                celular:this.form.value.celular!,
+                rut_recepcionista: this.form.value.rut_recepcionista!.toUpperCase(),
+                nombres: this.form.value.nombres!,
+                apellidos: this.form.value.apellidos!,
+                celular: this.form.value.celular!,
                 fecha_nacimiento: new Date(this.form.value.fecha_nacimiento as string).toISOString().slice(0,10),
-                direccion:this.form.value.direccion!,
+                direccion: this.form.value.direccion!,
                 comuna_id: this.form.value.comuna_id!
             };
 
-            await firstValueFrom(this.api.crearPaciente(payload));
-            this.snack.open('✅ Paciente creado correctamente', 'OK', { duration: 3000 });
+            await firstValueFrom(this.api.crearRecepcionista(payload));
+            this.snack.open('✅ Recepcionista creado correctamente', 'OK', { duration: 3000 });
             this.form.reset();
-            this.router.navigate(['/admin'])
+            this.router.navigate(['/admin']);
+
+
         }catch(e:any){
             const msg = this.humanizarError(e,paso);
             this.snack.open(`❌ ${msg}`, 'OK', { duration: 5000 });
-            if (paso === 'paciente' && usuario_id) {
-                try { await firstValueFrom(this.api.eliminarUsuario(usuario_id)); } catch {}
+            if(paso === 'recepcionista' && usuario_id){
+
             }
         }finally{
             this.loading.set(false);

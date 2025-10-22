@@ -1,5 +1,5 @@
 <div class="wrap">
-  <h1>Agregar nuevo paciente</h1>
+  <h1>Agregar nuevo recepcionista</h1>
 
   <form [formGroup]="form" (ngSubmit)="submit()" class="grid">
 
@@ -37,15 +37,15 @@
       </div>
     </section>
 
-    <!-- Datos de Paciente -->
+    <!-- Datos de Recepcionista -->
     <section class="card">
-      <h2>Datos del Paciente</h2>
+      <h2>Datos del Recepcionista</h2>
       <div class="grid g3">
         <mat-form-field appearance="outline">
           <mat-label>RUT</mat-label>
-          <input matInput formControlName="rut_paciente" placeholder="12.345.678-5" />
-          <mat-error *ngIf="form.get('rut_paciente')?.hasError('required')">Obligatorio</mat-error>
-          <mat-error *ngIf="form.get('rut_paciente')?.errors?.['rut'] as e">{{ e }}</mat-error>
+          <input matInput formControlName="rut_recepcionista" placeholder="12.345.678-5" />
+          <mat-error *ngIf="form.get('rut_recepcionista')?.hasError('required')">Obligatorio</mat-error>
+          <mat-error *ngIf="form.get('rut_recepcionista')?.errors?.['rut'] as e">{{ e }}</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -62,7 +62,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Celular</mat-label>
-          <input matInput formControlName="celular" placeholder="+56 9 1234 5678" />
+          <input matInput formControlName="celular" placeholder="912345678" />
           <mat-error *ngIf="form.get('celular')?.hasError('required')">Obligatorio</mat-error>
         </mat-form-field>
 
@@ -93,7 +93,7 @@
     </section>
 
     <button mat-raised-button color="primary" [disabled]="loading()">
-        {{ loading() ? 'Creando…' : 'Crear paciente' }}
+        {{ loading() ? 'Creando…' : 'Crear Recepcionista' }}
     </button>
   </form>
 </div>

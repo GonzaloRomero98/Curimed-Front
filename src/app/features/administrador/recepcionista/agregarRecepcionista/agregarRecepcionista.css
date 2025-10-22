@@ -20,6 +20,7 @@ h2 {
 
 .grid { display: grid; gap: 16px; }
 
+
 .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
@@ -43,6 +44,7 @@ button[mat-raised-button] {
   box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
 
+
 mat-hint { font-size: 12px; color: #6b7280; }
 mat-error { font-size: 12px; }
 
@@ -51,6 +53,7 @@ mat-error { font-size: 12px; }
   outline-offset: 2px;
   border-radius: 6px;
 }
+
 
 @media (max-width: 1100px) {
   .g3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }

@@ -25,7 +25,7 @@ interface pacienteData{
         MatCardModule, 
         MatTableModule, 
         MatButtonModule, 
-        MatIconModule],
+        MatIconModule,],
     templateUrl:'./listaPaciente.html',
     styleUrls:['./listaPaciente.css']
 })
