@@ -33,9 +33,12 @@ export class LoginService{
     }
 
     setSesion(token:string, datosUsuario:any){
+        sessionStorage.setItem('tokenusuario',token);
+        sessionStorage.setItem('usuario', JSON.stringify(datosUsuario))
         localStorage.setItem('tokenusuario',token);
         localStorage.setItem('usuario',JSON.stringify(datosUsuario));
         const rolToken = localStorage.getItem('tokenusuario');
+        const rolToken2 = sessionStorage.getItem('tokenusuario')
         if(rolToken){
             const payload = jwtDecode<JwtPayload>(rolToken);
             return payload.rol;

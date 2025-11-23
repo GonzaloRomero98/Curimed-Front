@@ -1,0 +1,106 @@
+<section class="container">
+  <mat-card class="mb-16">
+    <div class="flex-row space-between align-center">
+      <div>
+        <h1 class="title">Perfil del médico</h1>
+        <h3 class="title">{{ nombreCompleto }}</h3>
+        <p class="subtitle">Especialidad: <strong>{{ especialidad || '—' }}</strong></p>
+      </div>
+      <div class="actions">
+        <button mat-raised-button color="primary" matTooltip="Actualizar datos del perfil y citas" (click)="ngOnInit()">
+          Recargar
+        </button>
+      </div>
+    </div>
+
+    <mat-divider class="my-12"></mat-divider>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-label">Total de citas</span>
+        <span class="stat-value">{{ totalCitas }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Pendientes</span>
+        <span class="stat-value">{{ pendientes }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Realizadas</span>
+        <span class="stat-value">{{ realizadas }}</span>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Cargando -->
+  <mat-card class="mb-16" *ngIf="cargarEspecialida">
+    <h3 class="section-title">Cargando datos del perfil…</h3>
+    <p>Obteniendo especialidad y citas.</p>
+  </mat-card>
+
+  <mat-card>
+  <h3 class="section-title">Citas del día / próximas</h3>
+
+  <!-- Controles de filtro -->
+  <div class="list-controls">
+    <mat-button-toggle-group
+      name="filtro"
+      [value]="filtro"
+      (change)="onChangeFiltro($event.value)">
+      <mat-button-toggle value="todas">Todas</mat-button-toggle>
+      <mat-button-toggle value="pendiente">Pendientes</mat-button-toggle>
+      <mat-button-toggle value="realizada">Realizadas</mat-button-toggle>
+      <mat-button-toggle value="cancelada">Canceladas</mat-button-toggle>
+      <mat-button-toggle value="proximas">Próximas</mat-button-toggle>
+    </mat-button-toggle-group>
+    <span class="controls-spacer"></span>
+    <span class="controls-count">{{ filtroCitas.length }} resultados</span>
+  </div>
+
+  <!-- Vacío -->
+  <div *ngIf="!cargarEspecialida && filtroCitas.length === 0" class="empty">
+    <p>No hay citas para mostrar con el filtro seleccionado.</p>
+    <button mat-stroked-button color="primary" (click)="onChangeFiltro('todas')">Quitar filtro</button>
+  </div>
+
+  <!-- Lista -->
+  <div class="list" *ngIf="!cargarEspecialida && filtroCitas.length > 0">
+    <!-- Encabezados sticky -->
+    <div class="list-head">
+      <div>Fecha</div>
+      <div>Hora</div>
+      <div>Servicio</div>
+      <div>Estado</div>
+      <div class="text-right">Acciones</div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <ng-container *ngFor="let c of pageCitas; let i = index; trackBy: trackByCita">
+      <div class="list-row" [class.alt]="i % 2 === 1">
+        <div class="col"><span class="mono">{{ c.fecha_cita | date:'yyyy-MM-dd' }}</span></div>
+        <div class="col"><span class="mono">{{ c.inicio_cita }} — {{ c.fin_cita }}</span></div>
+        <div class="col"><span>{{ c.servicio_id || '—' }}</span></div>
+        <div class="col">
+          <span class="pill" [attr.data-state]="c.estado.toLowerCase()">
+            {{ c.estado }}
+          </span>
+        </div>
+        <div class="col text-right actions">
+          <button mat-stroked-button disabled>Ver ficha</button>
+          <button mat-raised-button color="primary" [disabled]="c.estado !== 'PENDIENTE'" (click)="inicio_cita(c)" >Iniciar</button>
+        </div>
+      </div>
+      <mat-divider *ngIf="i < pageCitas.length - 1"></mat-divider>
+    </ng-container>
+
+    <!-- Paginador -->
+    <mat-paginator
+      [length]="filtroCitas.length"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[5,10,25]"
+      (page)="onPage($event)">
+    </mat-paginator>
+  </div>
+</mat-card>
+</section>

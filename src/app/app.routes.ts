@@ -12,6 +12,9 @@ import { ReservasPacienteComponent } from './features/reservas/paciente/reservaP
 import { Registro } from './features/auth/pages/registro/registro';
 import { AgregarRecepcionistaComponent } from './features/administrador/recepcionista/agregarRecepcionista/agregarRecepcionista';
 import { ListaRecepcionistas } from './features/administrador/recepcionista/listarRecepcionistas/listarRecepcionista';
+import { PerfilMedico } from './features/perfil/medico/perfilMedico';
+import { VideoLlamadaComponent } from './features/videoLlamada/videoLlamada';
+import { perfilPaciente } from './features/perfil/paciente/perfilPaciente';
 
 export const routes: Routes = [
     {path:'', component: HomeComponent},
@@ -43,6 +46,24 @@ export const routes: Routes = [
         canActivate:[roleGuard],
         data:{roles:['RECEPCIONISTA']}
     },
+    {
+        path:'perfilMedico',
+        component:PerfilMedico,
+        canActivate:[roleGuard],
+        data:{roles:['DOCTOR']}
+    },
+    {
+        path:'perfilPaciente',
+        component:perfilPaciente,
+        canActivate:[roleGuard],
+        data:{roles:['PACIENTE']}
+    },
+    {
+        path:'videoLlamada/:roomId',
+        component: VideoLlamadaComponent,
+        canActivate:[roleGuard],
+        data:{roles:['DOCTOR','PACIENTE']}
+    }
 
         
 ];

@@ -13,6 +13,8 @@ import { jwtDecode } from 'jwt-decode';
 import { ReservasComponent } from './features/reservas/recepcionista/reservas';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatCardModule } from '@angular/material/card';
+import { PerfilMedico } from './features/perfil/medico/perfilMedico';
+import { perfilPaciente } from './features/perfil/paciente/perfilPaciente';
 
 
 export interface JwtPayload{
@@ -35,7 +37,9 @@ export interface JwtPayload{
     Administrador,
     ReservasComponent,
     MatCardModule, 
-    MatButtonModule
+    MatButtonModule,
+    PerfilMedico,
+    perfilPaciente
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -133,5 +137,13 @@ export class App {
   }
 
   irPerfil(){
+    const rol = this.obtenerRol();
+    console.log(rol);
+    if(rol === 'DOCTOR'){
+      console.log('navegando a perfil medico');
+      this.router.navigate(['/perfilMedico']);
+    }else if(rol === 'PACIENTE'){
+      this.router.navigate(['/perfilPaciente']);
+    }
   }
 }
