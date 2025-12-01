@@ -31,7 +31,14 @@ export class WebRtcService {
     });
 
     this.pc = new RTCPeerConnection({
-      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        {
+          urls: "turn:44.219.174.212:3478",
+          username: "curuser",
+          credential: "superpassword123"
+        }
+      ]
     });
 
     // === Eventos WebRTC ===
