@@ -15,6 +15,8 @@ export class WebRtcService {
 
   private isInitialized = false;
 
+  private pendingCandidates: RTCIceCandidateInit[] = [];
+
   init(roomId: string) {
     if (this.isInitialized) return;
 
@@ -59,42 +61,71 @@ export class WebRtcService {
 
     // Offer/Answer + candidates recibidos
     this.socket.on("signal", async (msg: any) => {
-      console.log("[WebRTC] signal recibido:", msg.type, "from", msg.from);
+  console.log("[WebRTC] signal recibido:", msg.type, "from", msg.from);
 
-      if (msg.type === "description") {
-        const description = msg.payload as RTCSessionDescriptionInit;
+  if (msg.type === "description") {
+    const description = msg.payload as RTCSessionDescriptionInit;
 
-        if (!this.remotePeerId) {
-          this.remotePeerId = msg.from;
+    if (!this.remotePeerId) {
+      this.remotePeerId = msg.from;
+    }
+
+    try {
+      if (description.type === "offer") {
+        // Recibo offer -> setRemote + answer
+        console.log("[WebRTC] Recibí OFFER, aplicando como remoteDescription");
+        await this.pc.setRemoteDescription(description);
+
+        // Ahora que tengo remoteDescription, aplico candidates pendientes
+        await this.flushPendingCandidates();
+
+        const answer = await this.pc.createAnswer();
+        await this.pc.setLocalDescription(answer);
+
+        this.socket.emit("signal", {
+          to: msg.from,
+          type: "description",
+          payload: this.pc.localDescription,
+        });
+      } else if (description.type === "answer") {
+        // Answer solo tiene sentido si YO envié un offer antes
+        if (this.pc.signalingState !== "have-local-offer" &&
+            this.pc.signalingState !== "have-remote-offer") {
+          console.warn(
+            "[WebRTC] Answer inesperada en estado",
+            this.pc.signalingState,
+            "- la ignoro."
+          );
+          return;
         }
 
-        try {
-          if (description.type === "offer") {
-            // Recibo offer -> setRemote + answer
-            await this.pc.setRemoteDescription(description);
-            const answer = await this.pc.createAnswer();
-            await this.pc.setLocalDescription(answer);
+        console.log("[WebRTC] Recibí ANSWER, aplicando como remoteDescription");
+        await this.pc.setRemoteDescription(description);
 
-            this.socket.emit("signal", {
-              to: msg.from,
-              type: "description",
-              payload: this.pc.localDescription,
-            });
-          } else {
-            // Recibo answer
-            await this.pc.setRemoteDescription(description);
-          }
-        } catch (err) {
-          console.error("[WebRTC] Error manejando description:", err);
-        }
-      } else if (msg.type === "candidate") {
-        try {
-          await this.pc.addIceCandidate(msg.payload);
-        } catch (err) {
-          console.error("Error agregando ICE candidate remoto:", err);
-        }
+        // Aplico candidates que hayan llegado antes
+        await this.flushPendingCandidates();
+      } else {
+        console.warn("[WebRTC] Description desconocida:", description.type);
       }
-    });
+    } catch (err) {
+      console.error("[WebRTC] Error manejando description:", err);
+    }
+  } else if (msg.type === "candidate") {
+    try {
+      if (!this.pc.remoteDescription) {
+        console.warn(
+          "[WebRTC] remoteDescription aún no está lista, guardo candidate en cola."
+        );
+        this.pendingCandidates.push(msg.payload);
+        return;
+      }
+
+      await this.pc.addIceCandidate(msg.payload);
+    } catch (err) {
+      console.error("Error agregando ICE candidate remoto:", err);
+    }
+  }
+});
 
     // Cuando YO ya estoy en la sala y entra alguien nuevo
     this.socket.on("usuario-conectado", async (data: any) => {
@@ -182,6 +213,25 @@ export class WebRtcService {
     }
   }
 
+  private async flushPendingCandidates() {
+    if (!this.pc.remoteDescription) return;
+    if (this.pendingCandidates.length === 0) return;
+
+    console.log(
+      `[WebRTC] Aplicando ${this.pendingCandidates.length} ICE candidates pendientes`
+    );
+
+    for (const c of this.pendingCandidates) {
+      try {
+        await this.pc.addIceCandidate(c);
+      } catch (err) {
+        console.error("Error aplicando candidate pendiente:", err);
+      }
+    }
+
+    this.pendingCandidates = [];
+  }
+
   getRemoteStream() {
     return this.remoteStream;
   }
@@ -200,5 +250,6 @@ export class WebRtcService {
     this.isInitialized = false;
     this.remotePeerId = null;
     this.remoteStream = new MediaStream();
+    this.pendingCandidates = [];
   }
 }
