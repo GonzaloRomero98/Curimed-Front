@@ -25,6 +25,7 @@ export class WebRtcService {
     this.socket = io(environment.signalingUrl, {
       transports: ["websocket"],
       auth: { token },
+      path: "/socket.io",
     });
 
     this.pc = new RTCPeerConnection({
