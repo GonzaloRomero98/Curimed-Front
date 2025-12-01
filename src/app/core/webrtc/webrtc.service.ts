@@ -22,7 +22,7 @@ export class WebRtcService {
 
     const token = sessionStorage.getItem("tokenusuario") || "";
 
-    this.socket = io(environment.API_URL, {
+    this.socket = io(environment.signalingUrl, {
       transports: ["websocket"],
       auth: { token },
     });
@@ -115,6 +115,13 @@ export class WebRtcService {
   async useLocalMedia(
     constraint: MediaStreamConstraints = { video: true, audio: true }
   ) {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.error(
+        "getUserMedia no está disponible. Necesitas usar HTTPS o localhost."
+      );
+      throw new Error("getUserMedia no disponible en este contexto");
+    }
+    
     this.localStream = await navigator.mediaDevices.getUserMedia(constraint);
     const track = this.localStream.getVideoTracks()[0];
 
